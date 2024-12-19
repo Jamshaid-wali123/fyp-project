@@ -1,10 +1,14 @@
-import React from 'react'
-import SignUp from '../pages/SignUp'
-import SignIn from '../pages/SignIn'
+import SignUp from '../pages/auth/SignUp'
+import SignIn from '../pages/auth/SignIn'
+import Home from '../pages/home/Home'
 import { Route, Routes } from 'react-router-dom'
 
 const Index = () => {
   const links = [
+    {
+      path:'/',
+      page:Home
+    },
     {
       path:'/sign-up',
       page:SignUp
@@ -18,8 +22,8 @@ const Index = () => {
     <>
       <Routes>
         {
-          links.map((link) => (
-            <Route path ={link.path} element={<link.page/>} />
+          links.map((link, idx) => (
+            <Route key={idx} path ={link.path} element={<link.page/>} />
           ))
         }
       </Routes>
