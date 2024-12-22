@@ -1,17 +1,17 @@
-import React from "react";
 import goalImg from "../assets/goal.png";
 import MileStoneImg from "../assets/MileStone.png";
+import classNames from "classnames";
 
-const CreateProfile = () => {
+const OurGoalSection = () => {
   return (
-    <div>
-      <div>
-        <div>
-          <img src={goalImg} className="" />
+    <div className="my-5">
+      <div className={classNames('flex justify-between items-center')}>
+        <div className="">
+          <img src={goalImg} className={classNames('w-[85%] object-cover')}  alt="img"/>
         </div>
-        <div>
-          <h4>our Goal</h4>
-          <p>
+        <div className="w-[50%]">
+          <h4 className="font-semibold text-3xl">Our Goal</h4>
+          <p className="mt-5">
             Our Goals is your life Inspire donors to commit to giving blood
             every three months. Maintain a consistent supply to support
             hospitals and emergency services. Organize events and campaigns to
@@ -20,10 +20,11 @@ const CreateProfile = () => {
           </p>
         </div>
       </div>
-      <div>
-        <div>
-          <h4>our MileStone</h4>
-          <p>
+
+      <div className={classNames('flex justify-between items-center')}>
+      <div className="w-[50%] ps-12">
+          <h4 className="font-semibold text-3xl">Our Milestone</h4>
+          <p className="mt-5">
             Our Goals is your life Inspire donors to commit to giving blood
             every three months. Maintain a consistent supply to support
             hospitals and emergency services. Organize events and campaigns to
@@ -31,12 +32,12 @@ const CreateProfile = () => {
             the importance of blood donation and its life-saving impact.
           </p>
         </div>
-        <div>
-          <img src={MileStoneImg} className="" />
+        <div className="">
+          <img src={MileStoneImg} className={classNames('w-[85%] object-cover')}  alt="img"/>
         </div>
       </div>
     </div>
   );
 };
 
-export default CreateProfile;
+export default OurGoalSection;
