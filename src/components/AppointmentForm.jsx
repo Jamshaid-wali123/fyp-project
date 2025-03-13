@@ -16,12 +16,12 @@ const AppointmentForm = () => {
           </div>
           
           <div>
-            <label className="block text-white text-sm font-medium mb-1" htmlFor="email1">Email</label>
+            <label className="block text-white text-sm font-medium mb-1" htmlFor="email1">Password</label>
             <input
-              type="email"
-              id="email1"
+              type="password"
+              id="password"
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              placeholder="Enter your email"
+              placeholder="Enter your password"
             />
           </div>
           
@@ -59,7 +59,7 @@ const AppointmentForm = () => {
             <div className="flex-1">
               <label className="block text-white text-sm font-medium mb-1" htmlFor="time">Time</label>
               <input
-                type="text"
+                type="time"
                 id="time"
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 placeholder="Select time"
@@ -69,7 +69,7 @@ const AppointmentForm = () => {
             <div className="flex-1">
               <label className="block text-white text-sm font-medium mb-1" htmlFor="date">Date</label>
               <input
-                type="text"
+                type="date"
                 id="date"
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 placeholder="Select Date"

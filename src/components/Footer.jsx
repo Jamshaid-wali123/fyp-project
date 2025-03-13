@@ -45,6 +45,7 @@ const Footer = () => {
             <li><a href="#" className="hover:underline">Contact Us</a></li>
             <li><a href="#" className="hover:underline">Appointment Schedule Form</a></li>
             <li><a href="#" className="hover:underline">Eligibility Screening</a></li>
+            <li><a href="#" className="hover:underline">Make Profile</a></li>
           </ul>
         </div>
       </div>
