@@ -1,5 +1,7 @@
 import classNames from "classnames";
 import { Link } from "react-router-dom";
+// import googleimage from ""
+// import image from "..//////////../"
 
 const SignIn = () => {
   return (
@@ -34,6 +36,17 @@ const SignIn = () => {
         </div>
 
         <div className={classNames("w-full")}>
+        <div className={classNames("mt-5")}>
+            <label>User Name</label>
+            <input
+              type="text"
+              placeholder="username..."
+              className={classNames(
+                "w-full border rounded py-1.5 px-2 mt-1 focus:outline-none"
+              )}
+            />
+          </div>
+
           <div className={classNames("mt-5")}>
             <label>Email</label>
             <input
@@ -62,7 +75,7 @@ const SignIn = () => {
             "mt-5 border rounded w-full flex justify-center py-2.5 bg-[#8051C6] text-white"
           )}
         >
-          <button>Sign In</button>
+          <button>LogIn</button>
         </div>
 
         <div>

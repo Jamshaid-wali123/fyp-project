@@ -2,6 +2,7 @@ import SignUp from '../pages/auth/SignUp'
 import SignIn from '../pages/auth/SignIn'
 import Home from '../pages/home/Home'
 import { Route, Routes } from 'react-router-dom'
+import Profile from '../Components/Profile'
 
 const Index = () => {
   const links = [
@@ -16,6 +17,10 @@ const Index = () => {
     {
       path:'/sign-in',
       page:SignIn
+    },
+    {
+      path:'/profile',
+      page:Profile
     }
   ]
   return (

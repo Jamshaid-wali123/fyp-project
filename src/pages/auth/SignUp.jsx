@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+import GoogleImg from '../../assets/googlelogo.png'
 
 const SignUp = () => {
+  
   return (
     <div className={classNames("flex justify-center my-7 items-center h-screen")}>
       <div
@@ -20,7 +22,7 @@ const SignUp = () => {
             )}
           >
             <span>Google</span>
-            <i>Icon</i>
+            <i><google/></i>
           </button>
           <span>Or</span>
           <button
@@ -29,7 +31,7 @@ const SignUp = () => {
             )}
           >
             <span>Facebook</span>
-            <i>Icon</i>
+           <img src={GoogleImg} alt="img" />
           </button>
         </div>
 
@@ -98,7 +100,7 @@ const SignUp = () => {
         <div>
           Already have an Account?{" "}
           <Link to={"/sign-in"} className={classNames("text-blue-700")}>
-            Sign In
+            Login 
           </Link>
         </div>
       </div>

@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import HeroSection from "./HeroSection"
 
 const Navbar = () => {
+  const navigate = useNavigate()
   return (
     <div className={"bg-[url('bg.png')] w-screen h-screen relative"}>
 <nav className=" text-white border-gray-200 dark:bg-gray-900">
@@ -12,7 +13,7 @@ const Navbar = () => {
   <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
     <div className="flex gap-2">
     <Link to={'sign-in'}>Login</Link>
-      <button type="button" className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+      <button onClick={() => navigate('/profile')} type="button" className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
         <span className="sr-only">Open user menu</span>
         <img className="w-8 h-8 rounded-full object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="user photo" />
       </button>

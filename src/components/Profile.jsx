@@ -1,6 +1,6 @@
 import React from "react";
 
-const MakeProfile = () => {
+const Profile = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -16,6 +16,8 @@ const MakeProfile = () => {
           <span className="text-sm text-gray-500 mt-2">Upload Picture</span>
         </div>
         <form className="space-y-4">
+        
+          <label>Name</label>
           <input
             type="text"
             name="name"
@@ -23,6 +25,7 @@ const MakeProfile = () => {
             className="w-full p-2 border rounded"
             required
           />
+          <label>Phone no</label>
           <input
             type="tel"
             name="phone"
@@ -30,6 +33,7 @@ const MakeProfile = () => {
             className="w-full p-2 border rounded"
             required
           />
+          <label>Email</label>
           <input
             type="email"
             name="email"
@@ -37,6 +41,7 @@ const MakeProfile = () => {
             className="w-full p-2 border rounded"
             required
           />
+          <label>Blood type</label>
           <input
             type="text"
             name="bloodType"
@@ -44,6 +49,7 @@ const MakeProfile = () => {
             className="w-full p-2 border rounded"
             required
           />
+          <label>Health Condition</label>
           <input
             type="text"
             name="healthCondition"
@@ -51,6 +57,7 @@ const MakeProfile = () => {
             className="w-full p-2 border rounded"
             required
           />
+          <label>Age</label>
           <input
             type="number"
             name="age"
@@ -58,6 +65,7 @@ const MakeProfile = () => {
             className="w-full p-2 border rounded"
             required
           />
+          <label>Weight</label>
           <input
             type="text"
             name="weight"
@@ -65,6 +73,7 @@ const MakeProfile = () => {
             className="w-full p-2 border rounded"
             required
           />
+          <label>Gender</label>
           <input
             type="text"
             name="gender"
@@ -72,6 +81,7 @@ const MakeProfile = () => {
             className="w-full p-2 border rounded"
             required
           />
+          <label>Previous Donation Date</label>
           <input
             type="date"
             name="previousDonationDate"
@@ -91,4 +101,4 @@ const MakeProfile = () => {
   );
 };
 
-export default MakeProfile;
+export default Profile;
