@@ -26,7 +26,7 @@ const Index = () => {
   return (
     <>
       <Routes>
-        {
+        { 
           links.map((link, idx) => (
             <Route key={idx} path ={link.path} element={<link.page/>} />
           ))
