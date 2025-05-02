@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 import GoogleImg from '../../assets/googlelogo.png'
+import FacebookImg from '../../assets/facebook-logo.png'
 
 const SignUp = () => {
   
@@ -22,7 +23,7 @@ const SignUp = () => {
             )}
           >
             <span>Google</span>
-            <i><google/></i>
+            <img src={GoogleImg} alt="Google" className="w-6 h-6" />
           </button>
           <span>Or</span>
           <button
@@ -31,7 +32,7 @@ const SignUp = () => {
             )}
           >
             <span>Facebook</span>
-           <img src={GoogleImg} alt="img" />
+            <img src={FacebookImg} alt="Facebook" className="w-6 h-6" />
           </button>
         </div>
 

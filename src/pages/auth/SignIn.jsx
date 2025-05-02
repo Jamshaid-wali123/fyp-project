@@ -1,9 +1,21 @@
 import classNames from "classnames";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import GoogleImg from '../../assets/googlelogo.png';
+import FacebookImg from '../../assets/facebook-logo.png';
 // import googleimage from ""
 // import image from "..//////////../"
 
 const SignIn = () => {
+  const navigate = useNavigate();
+  const [role, setRole] = useState("user");
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // TODO: Add real authentication logic here
+    navigate('/profile', { state: { role } });
+  };
+
   return (
     <div className={classNames("flex justify-center items-center h-screen")}>
       <div
@@ -22,7 +34,7 @@ const SignIn = () => {
             )}
           >
             <span>Google</span>
-            <i>Icon</i>
+            <img src={GoogleImg} alt="Google" className="w-6 h-6" />
           </button>
           <span>Or</span>
           <button
@@ -31,12 +43,12 @@ const SignIn = () => {
             )}
           >
             <span>Facebook</span>
-            <i>Icon</i>
+            <img src={FacebookImg} alt="Facebook" className="w-6 h-6" />
           </button>
         </div>
 
         <div className={classNames("w-full")}>
-        <div className={classNames("mt-5")}>
+          <div className={classNames("mt-5")}>
             <label>User Name</label>
             <input
               type="text"
@@ -68,6 +80,18 @@ const SignIn = () => {
               )}
             />
           </div>
+
+          <div className={classNames("mt-5")}>
+            <label>Role</label>
+            <select
+              value={role}
+              onChange={e => setRole(e.target.value)}
+              className="w-full border rounded py-1.5 px-2 mt-1 focus:outline-none"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
         </div>
 
         <div
@@ -75,7 +99,7 @@ const SignIn = () => {
             "mt-5 border rounded w-full flex justify-center py-2.5 bg-[#8051C6] text-white"
           )}
         >
-          <button>LogIn</button>
+          <button onClick={handleLogin} className="w-full">LogIn</button>
         </div>
 
         <div>

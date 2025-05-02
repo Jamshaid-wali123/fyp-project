@@ -3,6 +3,7 @@ import SignIn from '../pages/auth/SignIn'
 import Home from '../pages/home/Home'
 import { Route, Routes } from 'react-router-dom'
 import Profile from '../Components/Profile'
+import ProfilePage from '../pages/home/ProfilePage'
 
 const Index = () => {
   const links = [
@@ -20,7 +21,7 @@ const Index = () => {
     },
     {
       path:'/profile',
-      page:Profile
+      page:ProfilePage
     }
   ]
   return (
