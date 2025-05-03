@@ -1,4 +1,81 @@
 import React, { useState } from 'react';
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import classNames from "classnames";
+
+const profileSchema = yup.object().shape({
+  name: yup.string().required("Name is required"),
+  phone: yup
+    .number()
+    .typeError("Phone number must be a number")
+    .positive("Phone number must be positive")
+    .integer("Phone number must be an integer")
+    .required("Phone number is required"),
+  email: yup.string().email("Invalid email format").required("Email is required"),
+  bloodType: yup.string().required("Blood type is required"),
+  gender: yup.string().required("Gender is required"),
+  age: yup
+    .number()
+    .typeError("Age must be a number")
+    .positive("Age must be positive")
+    .integer("Age must be an integer")
+    .min(18, "You must be at least 18 years old")
+    .max(100, "Age must be less than 100")
+    .required("Age is required"),
+  weight: yup
+    .number()
+    .typeError("Weight must be a number")
+    .positive("Weight must be positive")
+    .min(50, "Weight must be at least 50kg")
+    .required("Weight is required"),
+  previousDonationDate: yup
+    .date()
+    .required("Previous donation date is required")
+    .test('is-3-months-old', 'Last donation must be at least 3 months ago', function(value) {
+      if (!value) return true;
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      return value <= threeMonthsAgo;
+    }),
+});
+
+const appointmentSchema = yup.object().shape({
+  name: yup.string().required("Name is required"),
+  email: yup.string().email("Invalid email format").required("Email is required"),
+  phone: yup
+    .string()
+    .matches(/^[0-9]{10}$/, "Phone number must be 10 digits")
+    .required("Phone number is required"),
+  location: yup.string().required("Location is required"),
+  time: yup
+    .string()
+    .required("Time is required")
+    .test('valid-time', 'Appointment time must be between 8 AM and 6 PM', function(value) {
+      if (!value) return true;
+      const [hours, minutes] = value.split(':').map(Number);
+      const appointmentTime = new Date();
+      appointmentTime.setHours(hours, minutes);
+      
+      const startTime = new Date();
+      startTime.setHours(8, 0);
+      
+      const endTime = new Date();
+      endTime.setHours(18, 0);
+      
+      return appointmentTime >= startTime && appointmentTime <= endTime;
+    }),
+  date: yup
+    .date()
+    .required("Date is required")
+    .min(new Date(), "Cannot select past dates")
+    .test('valid-date', 'Cannot select past dates', function(value) {
+      if (!value) return true;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return value >= today;
+    }),
+});
 
 const initialProfile = {
   name: 'Ali khan',
@@ -20,38 +97,35 @@ const sidebarTabs = [
 ];
 
 const ProfilePage = () => {
-  const [profile, setProfile] = useState(initialProfile);
   const [activeTab, setActiveTab] = useState('Edit Profile');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
-  };
+  // Profile form
+  const {
+    register: registerProfile,
+    handleSubmit: handleProfileSubmit,
+    formState: { errors: profileErrors },
+  } = useForm({
+    resolver: yupResolver(profileSchema),
+    defaultValues: initialProfile,
+    mode: 'onSubmit'
+  });
 
-  const handleUpdate = (e) => {
-    e.preventDefault();
+  // Appointment form
+  const {
+    register: registerAppointment,
+    handleSubmit: handleAppointmentSubmit,
+    formState: { errors: appointmentErrors },
+  } = useForm({
+    resolver: yupResolver(appointmentSchema),
+    mode: 'onSubmit'
+  });
+
+  const onProfileUpdate = (data) => {
     // TODO: Add backend update logic here
     alert('Profile updated!');
   };
 
-  // Appointment form state
-  const [appointment, setAppointment] = useState({
-    name: '',
-    email: '',
-    email2: '',
-    phone: '',
-    location: '',
-    time: '',
-    date: '',
-  });
-
-  const handleAppointmentChange = (e) => {
-    const { name, value } = e.target;
-    setAppointment((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleAppointmentSubmit = (e) => {
-    e.preventDefault();
+  const onAppointmentSubmit = (data) => {
     // TODO: Add backend logic here
     alert('Appointment scheduled!');
   };
@@ -74,10 +148,10 @@ const ProfilePage = () => {
             {sidebarTabs.map((item) => (
               <button
                 key={item}
-                className={`border rounded py-2 transition-all duration-200 text-sm font-medium
+                className={`border rounded-lg py-2.5 px-4 transition-all duration-300 text-sm font-medium
                   ${activeTab === item 
-                    ? 'bg-purple-600 text-white font-bold shadow-md' 
-                    : 'bg-white text-gray-700 hover:bg-purple-50'
+                    ? 'bg-purple-600 text-white font-semibold shadow-md border-purple-600' 
+                    : 'bg-white text-gray-700 hover:bg-purple-50 border-gray-200'
                   }`}
                 onClick={() => setActiveTab(item)}
               >
@@ -88,88 +162,136 @@ const ProfilePage = () => {
           {/* Main Content */}
           <div className="flex-1">
             {activeTab === 'Edit Profile' && (
-              <form className="space-y-4" onSubmit={handleUpdate}>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={profile.name}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
+              <form className="space-y-4" onSubmit={handleProfileSubmit(onProfileUpdate)}>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Name</label>
+                    <input
+                      type="text"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        profileErrors.name && "border-red-500"
+                      )}
+                      {...registerProfile("name")}
+                    />
+                    {profileErrors.name && (
+                      <p className="text-red-500 text-sm mt-1">{profileErrors.name.message}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Phone no</label>
+                    <input
+                      type="number"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        profileErrors.phone && "border-red-500"
+                      )}
+                      placeholder="Enter phone number"
+                      {...registerProfile("phone")}
+                    />
+                    {profileErrors.phone && (
+                      <p className="text-red-500 text-sm mt-1">{profileErrors.phone.message}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Phone no</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={profile.phone}
-                    onChange={handleChange}
-                    placeholder="+92 xxx xxxxxxx"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Email</label>
+                    <input
+                      type="email"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        profileErrors.email && "border-red-500"
+                      )}
+                      {...registerProfile("email")}
+                    />
+                    {profileErrors.email && (
+                      <p className="text-red-500 text-sm mt-1">{profileErrors.email.message}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Blood Type</label>
+                    <input
+                      type="text"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        profileErrors.bloodType && "border-red-500"
+                      )}
+                      {...registerProfile("bloodType")}
+                    />
+                    {profileErrors.bloodType && (
+                      <p className="text-red-500 text-sm mt-1">{profileErrors.bloodType.message}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={profile.email}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Gender</label>
+                    <select
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        profileErrors.gender && "border-red-500"
+                      )}
+                      {...registerProfile("gender")}
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    {profileErrors.gender && (
+                      <p className="text-red-500 text-sm mt-1">{profileErrors.gender.message}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Age</label>
+                    <input
+                      type="number"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        profileErrors.age && "border-red-500"
+                      )}
+                      {...registerProfile("age")}
+                    />
+                    {profileErrors.age && (
+                      <p className="text-red-500 text-sm mt-1">{profileErrors.age.message}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Blood Type</label>
-                  <input
-                    type="text"
-                    name="bloodType"
-                    value={profile.bloodType}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Weight</label>
+                    <input
+                      type="number"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        profileErrors.weight && "border-red-500"
+                      )}
+                      placeholder="Enter weight in kg"
+                      {...registerProfile("weight")}
+                    />
+                    {profileErrors.weight && (
+                      <p className="text-red-500 text-sm mt-1">{profileErrors.weight.message}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Previous Donation Date</label>
+                    <input
+                      type="date"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        profileErrors.previousDonationDate && "border-red-500"
+                      )}
+                      {...registerProfile("previousDonationDate")}
+                    />
+                    {profileErrors.previousDonationDate && (
+                      <p className="text-red-500 text-sm mt-1">{profileErrors.previousDonationDate.message}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Gender</label>
-                  <input
-                    type="text"
-                    name="gender"
-                    value={profile.gender}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Age</label>
-                  <input
-                    type="number"
-                    name="age"
-                    value={profile.age}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Weight</label>
-                  <input
-                    type="text"
-                    name="weight"
-                    value={profile.weight}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Previous Donation Date</label>
-                  <input
-                    type="text"
-                    name="previousDonationDate"
-                    value={profile.previousDonationDate}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
-                </div>
+
                 <button
                   type="submit"
                   className="w-full bg-purple-600 text-white font-semibold py-2 rounded hover:bg-purple-700 mt-4"
@@ -179,90 +301,110 @@ const ProfilePage = () => {
               </form>
             )}
             {activeTab === 'Appointment' && (
-              <form className="space-y-4" onSubmit={handleAppointmentSubmit}>
+              <form className="space-y-4" onSubmit={handleAppointmentSubmit(onAppointmentSubmit)}>
                 <h2 className="text-3xl font-semibold text-gray-700 mb-6">Appointment Schedule Form</h2>
-                <div>
-                  <label className="block text-md font-medium text-gray-700">Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={appointment.name}
-                    onChange={handleAppointmentChange}
-                    placeholder="Enter your name"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-md font-medium text-gray-700">Name</label>
+                    <input
+                      type="text"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        appointmentErrors.name && "border-red-500"
+                      )}
+                      placeholder="Enter your name"
+                      {...registerAppointment("name")}
+                    />
+                    {appointmentErrors.name && (
+                      <p className="text-red-500 text-sm mt-1">{appointmentErrors.name.message}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-md font-medium text-gray-700">Email</label>
+                    <input
+                      type="email"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        appointmentErrors.email && "border-red-500"
+                      )}
+                      placeholder="Enter your email"
+                      {...registerAppointment("email")}
+                    />
+                    {appointmentErrors.email && (
+                      <p className="text-red-500 text-sm mt-1">{appointmentErrors.email.message}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-md font-medium text-gray-700">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={appointment.email}
-                    onChange={handleAppointmentChange}
-                    placeholder="Enter your email"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-md font-medium text-gray-700">Phone</label>
+                    <input
+                      type="tel"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        appointmentErrors.phone && "border-red-500"
+                      )}
+                      placeholder="Enter your phone no"
+                      {...registerAppointment("phone")}
+                    />
+                    {appointmentErrors.phone && (
+                      <p className="text-red-500 text-sm mt-1">{appointmentErrors.phone.message}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-md font-medium text-gray-700">Location</label>
+                    <input
+                      type="text"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        appointmentErrors.location && "border-red-500"
+                      )}
+                      placeholder="Select Location"
+                      {...registerAppointment("location")}
+                    />
+                    {appointmentErrors.location && (
+                      <p className="text-red-500 text-sm mt-1">{appointmentErrors.location.message}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-md font-medium text-gray-700">Email</label>
-                  <input
-                    type="email"
-                    name="email2"
-                    value={appointment.email2}
-                    onChange={handleAppointmentChange}
-                    placeholder="Enter your Email"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
-                </div>
-                <div>
-                  <label className="block text-md font-medium text-gray-700">Phone</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={appointment.phone}
-                    onChange={handleAppointmentChange}
-                    placeholder="Enter your phone no"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
-                </div>
-                <div>
-                  <label className="block text-md font-medium text-gray-700">Location</label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={appointment.location}
-                    onChange={handleAppointmentChange}
-                    placeholder="Select Location"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-1">
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
                     <label className="block text-md font-medium text-gray-700">Time</label>
                     <input
                       type="time"
-                      name="time"
-                      value={appointment.time}
-                      onChange={handleAppointmentChange}
-                      className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        appointmentErrors.time && "border-red-500"
+                      )}
+                      {...registerAppointment("time")}
                     />
+                    {appointmentErrors.time && (
+                      <p className="text-red-500 text-sm mt-1">{appointmentErrors.time.message}</p>
+                    )}
                   </div>
-                  <div className="flex-1">
+                  <div>
                     <label className="block text-md font-medium text-gray-700">Date</label>
                     <input
                       type="date"
-                      name="date"
-                      value={appointment.date}
-                      onChange={handleAppointmentChange}
-                      className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      className={classNames(
+                        "w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400",
+                        appointmentErrors.date && "border-red-500"
+                      )}
+                      {...registerAppointment("date")}
                     />
+                    {appointmentErrors.date && (
+                      <p className="text-red-500 text-sm mt-1">{appointmentErrors.date.message}</p>
+                    )}
                   </div>
                 </div>
+
                 <button
                   type="submit"
                   className="w-full bg-purple-600 text-white font-semibold py-2 rounded hover:bg-purple-700 mt-4"
                 >
-                  Appointment
+                  Schedule Appointment
                 </button>
               </form>
             )}
@@ -277,9 +419,6 @@ const ProfilePage = () => {
                   <li>No recent blood donation (last 3 months)</li>
                   <li>No infectious diseases</li>
                 </ol>
-                <button className="bg-purple-600 text-white font-semibold py-2 px-4 rounded hover:bg-purple-700 transition duration-300">
-                  Check Criteria
-                </button>
               </div>
             )}
             {activeTab === 'Donor History' && (
