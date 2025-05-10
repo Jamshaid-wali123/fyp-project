@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import classNames from "classnames";
+import { useLocation } from 'react-router';
+import { useAuth } from '../../context/AuthContext';
 
 const profileSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -90,16 +92,26 @@ const initialProfile = {
 
 const sidebarTabs = [
   'Edit Profile',
+  'Inventory',
   'Appointment',
   'Eligibility Criteria',
-  'Donor History',
+  'Donation History',
   'Notification',
 ];
 
 const ProfilePage = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('Edit Profile');
+  const { user } = useAuth();
 
-  // Profile form
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const tab = searchParams.get('tab');
+    if (tab && sidebarTabs.includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [location]);
+
   const {
     register: registerProfile,
     handleSubmit: handleProfileSubmit,
@@ -110,7 +122,6 @@ const ProfilePage = () => {
     mode: 'onSubmit'
   });
 
-  // Appointment form
   const {
     register: registerAppointment,
     handleSubmit: handleAppointmentSubmit,
@@ -121,12 +132,10 @@ const ProfilePage = () => {
   });
 
   const onProfileUpdate = (data) => {
-    // TODO: Add backend update logic here
     alert('Profile updated!');
   };
 
   const onAppointmentSubmit = (data) => {
-    // TODO: Add backend logic here
     alert('Appointment scheduled!');
   };
 
@@ -300,6 +309,50 @@ const ProfilePage = () => {
                 </button>
               </form>
             )}
+            {activeTab === 'Inventory' && (
+              <div className="bg-white p-6 rounded-lg shadow w-full">
+                <h2 className="text-3xl font-semibold text-gray-700 mb-6">Inventory Management</h2>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Blood Type</label>
+                      <select className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400">
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Quantity (Units)</label>
+                      <input
+                        type="number"
+                        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        placeholder="Enter quantity"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Status</label>
+                    <select className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400">
+                      <option value="available">Available</option>
+                      <option value="low">Low Stock</option>
+                      <option value="out">Out of Stock</option>
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    className="w-full bg-purple-600 text-white font-semibold py-2 rounded hover:bg-purple-700 mt-4"
+                  >
+                    Update Inventory
+                  </button>
+                </div>
+              </div>
+            )}
             {activeTab === 'Appointment' && (
               <form className="space-y-4" onSubmit={handleAppointmentSubmit(onAppointmentSubmit)}>
                 <h2 className="text-3xl font-semibold text-gray-700 mb-6">Appointment Schedule Form</h2>
@@ -421,7 +474,7 @@ const ProfilePage = () => {
                 </ol>
               </div>
             )}
-            {activeTab === 'Donor History' && (
+            {activeTab === 'Donation History' && (
               <div className="w-full flex flex-col items-center">
                 <h2 className="text-3xl font-semibold text-gray-700 mb-6">Donor History</h2>
                 <table className="border-collapse border border-gray-400 w-[500px] text-center">

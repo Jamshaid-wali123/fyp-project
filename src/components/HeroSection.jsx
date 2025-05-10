@@ -18,12 +18,7 @@ const HeroSection = () => {
           feels good."
         </p>
         <div className="flex justify-center space-x-4">
-          <button 
-            onClick={() => navigate('/sign-up')} 
-            className="bg-transparent border-2 border-white hover:bg-white hover:text-black text-white font-bold py-2 px-4 rounded"
-          >
-            Registered
-          </button>
+         
         </div>
       </div>
     </div>

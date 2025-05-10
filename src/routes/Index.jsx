@@ -1,9 +1,10 @@
-import SignUp from '../pages/auth/SignUp'
 import SignIn from '../pages/auth/SignIn'
+import SignUp from '../pages/auth/SignUp'
 import Home from '../pages/home/Home'
 import { Route, Routes } from 'react-router-dom'
 import Profile from '../Components/Profile'
 import ProfilePage from '../pages/home/ProfilePage'
+import AppointmentForm from '../components/AppointmentForm'
 
 const Index = () => {
   const links = [
@@ -22,6 +23,10 @@ const Index = () => {
     {
       path:'/profile',
       page:ProfilePage
+    },
+    {
+      path:'/profile/appointment',
+      page:AppointmentForm
     }
   ]
   return (
